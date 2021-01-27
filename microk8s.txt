@@ -1,0 +1,4 @@
+# access k8s dashboard in microk8s
+$ microk8s enable dashboard  # enable the dashboard
+$ microk8s kubectl -n kube-system describe secret $(microk8s kubectl -n kube-system get secret | grep default-token | awk '{print $1}')  # get token
+$ microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard --address 0.0.0.0 10443:443  # port forward and access through https://localhost:10443
