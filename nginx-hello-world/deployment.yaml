@@ -6,7 +6,7 @@ metadata:
   labels:
     app: nginx-hello-world
   name: nginx-hello-world
-  namespace: default
+  #namespace: default
 spec:
   replicas: 1
   revisionHistoryLimit: 10
