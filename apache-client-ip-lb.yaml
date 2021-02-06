@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: apache-client-ip
+  name: apache-client-ip
+  #namespace: default
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: apache-client-ip
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: apache-client-ip
+    spec:
+      containers:
+      - image: debian:buster-slim 
+        imagePullPolicy: Always
+        command: ["/bin/bash"]
+        args: ["-c", "apt-get update && apt-get install apache2 libapache2-mod-rpaf php libapache2-mod-php -yy && a2enmod rpaf && a2enmod php7.3 && service apache2 start && rm /var/www/html/index.html && echo \"<?php echo 'your IP is '; echo \\$_SERVER['HTTP_X_FORWARDED_FOR']; ?>\" > /var/www/html/index.php ; sleep infinity"]
+        name: apache-client-ip
+        resources:
+          limits:
+            cpu: 250m
+            memory: 512Mi
+          requests:
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        ports:
+        - containerPort: 80
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-client-ip
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80 
+  selector:
+    app: apache-client-ip
+  clusterIP: 10.43.236.209
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+status: 
+  loadBalancer:
+    ingress:
+    - ip: 192.168.1.89
+---
+apiVersion: networking.k8s.io/v1 
+kind: Ingress
+metadata:
+  name: apache-client-ip-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+        #  serviceName: apache-client-ip
+        #  servicePort: 80
+          service:
+            name: apache-client-ip
+            port:
+              number: 80 
+
