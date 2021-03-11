@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: autognuchess
+spec:
+  schedule: "*/2 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: autognuchess 
+            image: schnitz81/autognuchess
+            args: ["30"]
+            imagePullPolicy: IfNotPresent 
+          restartPolicy: Never
+
