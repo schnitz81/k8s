@@ -5,7 +5,7 @@ This is a complete working example on how to mount local path in the k8s node as
 
 ## Usage
 
-- Enter the correct node name in pv.yaml.<br>
+Enter the correct node name in pv.yaml.<br>
 The node name can be checked with:<br>
 ```kubectl get nodes```
 
