@@ -11,9 +11,9 @@ The node name can be checked with:<br>
 
 Deploy the yaml files:<br>
 ```
-  kubectl create -f storageclass.yaml 
-  kubectl create -f pv.yaml 
-  kubectl create -f pvc.yaml 
-  kubectl create -f deployment.yaml 
+kubectl create -f storageclass.yaml 
+kubectl create -f pv.yaml 
+kubectl create -f pvc.yaml 
+kubectl create -f deployment.yaml 
 ```
 
