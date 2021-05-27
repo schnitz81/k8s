@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+      app.kubernetes.io/name: {{ .Values.deployment.name }}
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: {{ .Values.deployment.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.deployment.name }}
+    spec:
+      volumes:
+      - name: {{ .Values.pvc.name }}-pvc
+        persistentVolumeClaim:
+          claimName: {{ .Values.pvc.name }}-pvc
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          command: ["{{ .Values.container.command }}"]
+          args: ["{{ .Values.container.args }}"]
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - mountPath: {{ .Values.container.mountpath }}
+            name: {{ .Values.pvc.name }}-pvc
+          ports:
+            {{- toYaml .Values.ports | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+

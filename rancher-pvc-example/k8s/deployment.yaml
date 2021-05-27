@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rancher-pvc-example
+  namespace: default
+  labels:
+      app.kubernetes.io/name: rancher-pvc-example
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: rancher-pvc-example
+  template:
+    metadata:
+      labels:
+        app: rancher-pvc-example
+    spec:
+      volumes:
+      - name: pvc-example-pvc
+        persistentVolumeClaim:
+          claimName: pvc-example-pvc
+      containers:
+        - name: rancher-pvc-example
+          image: alpine
+          command: ["/bin/sleep"]
+          args: ["infinity"]
+          imagePullPolicy: Always
+          volumeMounts:
+          - mountPath: /storage
+            name: pvc-example-pvc
+          ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+

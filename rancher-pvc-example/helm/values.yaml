@@ -1,0 +1,40 @@
+replicaCount: 1
+
+deployment:
+    name: rancher-pvc-example
+    namespace: default
+    
+image:
+  name: alpine
+  tag: latest
+  pullPolicy: Always
+
+container:
+  command: /bin/sleep
+  args: infinity
+  mountpath: /storage
+
+ports:
+  - name: http
+    containerPort: 80
+    protocol: TCP  
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+pvc:
+  name: pvc-example
+  accessModes:
+    - ReadWriteMany
+  size: 1Gi
+  storageClassName: local
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - dev-k8s-netscaler-worker-01
