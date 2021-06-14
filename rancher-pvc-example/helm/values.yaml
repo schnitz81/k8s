@@ -37,4 +37,4 @@ pvc:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - dev-k8s-netscaler-worker-02 
+          - ### ENTER NODE NAME ###  
