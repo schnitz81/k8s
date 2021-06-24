@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: fail2deny 
+  name: fail2deny
+  #namespace: default
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: fail2deny
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: fail2deny
+    spec:
+      containers:
+      - image: schnitz81/fail2deny
+        imagePullPolicy: Always
+        args: ["/var/log/auth.log"]
+        name: fail2deny
+        resources:
+          limits:
+            cpu: 50m
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/log
+          name: log-volume
+          readOnly: true
+        - mountPath: /etc/hosts.deny
+          name: hosts-deny
+      volumes:
+      - name: log-volume
+        hostPath:
+          path: /var/log
+          type: Directory
+      - name: hosts-deny
+        hostPath:
+          path: /etc/hosts.deny
+          type: File 
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 61
+
