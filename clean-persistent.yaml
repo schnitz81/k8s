@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: clean-persistent
+spec:
+  template:
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - **********************       # NODE NAME
+      containers:
+        - name: clean-persistent
+          image: busybox
+          command: ["bin/sh"]
+          args: ["-c","/bin/rm -rvf /persistent/*"]
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: persistent
+            mountPath: "/persistent"
+      volumes:
+      - name: persistent
+        hostPath:
+          path: "/persistent"
+      restartPolicy: Never
